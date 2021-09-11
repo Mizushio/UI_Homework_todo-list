@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>ToDo management</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- Font Awesome を使う場合はこちら↓ 
+		<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+		-->
+		<!-- jQuery UIを使う場合はこちら↓ -->
+		<link rel="stylesheet" href="jquery-ui/jquery-ui.min.css">
+		<script src="jquery-ui/external/jquery/jquery.js"></script>
+		<script src="jquery-ui/jquery-ui.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+		<!-- jQuery Mobileを使う場合はこちら↓
+		<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.4.5.min.css" />
+		<script src="jquery.mobile/jquery-2.1.4.min.js"></script>
+		<script src="jquery.mobile/jquery.mobile-1.4.5.min.js"></script>
+		-->
+		<link rel="stylesheet" type="text/css" href="./css/index.css" />
+    <script src="/store.js"></script>
+	</head>
+	<body>
+	<!-- 主体区域 -->
+  <section id="todoapp">
+    <!-- 输入框 -->
+    <header class="header">
+      <h1>ToDo-list</h1>  
+      <input v-model="inputValue.todothing" @keyup.enter="add" autofocus="autofocus" autocomplete="off" placeholder="press enter to add or press search to search "
+        class="new-todo" />
+        <input type="date" v-model="inputValue.tododate"/>
+    <select v-model="inputValue.todoclass" name="fruit">
+    <option value="">---</option>
+    <option value="仕事">仕事</option>
+    <option value="個人">個人</option>
+    </select>
+    <button class="clear-completed" @click="add">
+      Add
+    </button>
+
+    </header>
+    <!-- 列表区域 -->
+    <section class="main">
+      <ul class="todo-list">
+        <li class="todo" v-for="(item,index) in list">
+          <div class="view">
+            <span class="index">{{ index+1 }}.</span>
+            <label>{{ item }}</label>
+            <button class="destroy" @click="remove(index)"></button>
+          </div>
+        </li>
+      </ul>
+    </section>
+    <!-- 统计和清空 -->
+    <footer class="footer" >
+      <span class="todo-count">
+        <strong>{{list.length}}</strong> items left
+      </span>
+      <button class="clear-completed" @click="removeall">
+        Clear
+      </button>
+      made by mizushio
+      <button class="clear-completed" @click="search">
+        Search-
+      </button>
+    </footer>
+  </section>
+
+		
+	</body>
+	<script>
+
+var app = new Vue({
+      el: "#todoapp",
+      //getdata
+      created:function(){
+          let todos = localStorage.getItem("todos");
+          // alert("this!");
+		      if(todos != null){
+    	    	this.list = JSON.parse(todos);
+	      	}
+        },
+      data: {
+        list: [],
+        inputValue: {
+          todothing:"",
+          tododate:"",
+          todoclass:"",
+        }
+      },
+      methods: {
+        add: function () {
+
+          if(this.inputValue.todothing==""){
+            alert("please enter things");
+            return;
+          }
+          if(this.inputValue.todoclass==""){
+            alert("please enter class");
+            return;
+          }
+          if(this.inputValue.tododate==""){
+            alert("please enter date");
+            return;
+          }
+          this.list.push(this.inputValue.todoclass+","+this.inputValue.tododate+": "+this.inputValue.todothing);
+          //save
+			    localStorage.setItem("todos", JSON.stringify(this.list));
+         
+        },
+        remove:function(index){
+          console.log("delete");
+          console.log(index);
+          this.list.splice(index,1);
+          localStorage.setItem("todos", JSON.stringify(this.list));
+      
+        },
+        removeall:function(){
+          this.list=[];
+           localStorage.setItem("todos", JSON.stringify(this.list));
+      
+            },
+        search:function(){
+          
+          var outs="enter the string into the main enter line to search \nthis is the results:\n";
+          // alert(this.inputValue.todoclass);
+          for(var i=0;i<this.list.length;i++)
+          {
+            
+            if(this.list[i].includes(this.inputValue.todothing))
+            {
+              outs=outs+this.list[i]+"\n";
+            }
+          
+            
+          }
+            alert(outs);
+          
+        }
+     
+      },
+    })
+	</script>
+</html>
